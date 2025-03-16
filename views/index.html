@@ -14,8 +14,8 @@
   <body>
     <h1>URL Shortener Microservice</h1>
     <main>
-      <section>
-        <form action="api/shorturl" method="POST">
+    </section>
+        <form id="url_form" action="api/shorturl" method="POST">
           <fieldset>
             <legend>URL Shortener</legend>
             <label for="url_input">URL:</label>
@@ -23,10 +23,37 @@
             <input type="submit" value="POST URL" />
           </fieldset>
         </form>
+        <div id="result"></div>
       </section>
     </main>
     <footer>
       <p>By <a href="https://www.freecodecamp.org/">freeCodeCamp</a></p>
     </footer>
+    <script>
+      document.getElementById("url_form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const urlInput = document.getElementById("url_input").value;
+
+        const response = await fetch("/api/shorturl",{
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({url: urlInput}),
+        });
+
+        const result = await response.json();
+        const resultShow = document.getElementById("result");
+        
+        if (result.error){
+          resultShow.innerHTML = "error"
+        }
+        else{
+          resultShow.innerHTML = `Shortened URL: <a href="/api/shorturl/${result.short_url}" target="_blank">
+          ${window.location.origin}/api/shorturl/${result.short_url}
+          </a>`;
+        } 
+
+      });
+    </script>
   </body>
 </html>
